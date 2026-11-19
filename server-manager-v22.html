@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>سرور من</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--red:#e53935;--bg:#000;--panel:#0b0b0b;--line:#1c1c1c;--text:#eaeaea;--mute:#7d7d7d;--green:#43a047;--orange:#fb8c00}
+body{background:var(--bg);color:var(--text);font-family:Tahoma,system-ui,sans-serif;min-height:100vh;font-size:14px}
+.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);height:52px;display:flex;align-items:center;gap:10px;padding:0 10px}
+.ib{background:none;border:none;color:var(--text);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ib:active{background:var(--panel)}
+.ttl{flex:1;font-size:16px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mute)}
+.dot.on{background:var(--green)}
+main{padding:14px 14px 40px}
+.sec{display:none}.sec.on{display:block}
+h2{font-size:13px;color:var(--mute);margin:18px 0 8px;font-weight:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.card h3{font-size:14px;font-weight:600;margin-bottom:8px}
+ul{list-style:none}
+li{padding:7px 0;border-bottom:1px solid var(--line);direction:ltr;text-align:right;font-size:13px;color:#cfcfcf}
+li:last-child{border-bottom:none}
+.btn{background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font-family:inherit;margin-top:8px}
+.btn.g{background:none;border:1px solid var(--line);color:var(--text);width:auto;margin:0;padding:7px 10px;font-size:12px;font-weight:normal;gap:6px}
+.btn:active{opacity:.85}
+.btn:disabled{opacity:.4}
+input,select{width:100%;background:#000;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px;font-size:14px;margin-top:8px;outline:none;font-family:inherit}
+input:focus,select:focus{border-color:#3a3a3a}
+.note{color:var(--mute);font-size:12px;margin-top:8px}
+.out{background:#000;border:1px solid var(--line);border-radius:10px;padding:10px;font-family:Consolas,monospace;font-size:12px;color:#ccc;white-space:pre-wrap;margin-top:10px;direction:ltr;text-align:left}
+#term{height:260px;overflow:auto}
+.tl{display:flex;gap:8px;margin-top:8px}
+.tl input{margin-top:0;flex:1;direction:ltr;font-family:Consolas,monospace}
+.tl .btn{width:auto;margin:0;padding:11px 14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pill{font-size:12px;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:#000;color:var(--text);cursor:pointer;font-family:inherit;white-space:nowrap}
+.pill.on{border-color:var(--green);color:var(--green)}
+.pill.off{border-color:var(--red);color:var(--red)}
+.pill:disabled{opacity:.5;cursor:wait}
+.big{font-size:17px;font-weight:600;direction:ltr;text-align:left}
+.bar{height:8px;background:#161616;border-radius:6px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;width:0;background:var(--green);border-radius:6px;transition:width .6s,background .3s}
+.seg{display:flex;height:8px;border-radius:6px;overflow:hidden;background:#161616;margin-top:10px}
+.seg i{display:block;height:100%;transition:width .6s}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--mute);margin-top:8px;direction:ltr}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-left:5px;background:var(--c)}
+.sub{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-top:6px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top b{font-weight:600}
+.top small{display:block;color:var(--mute);font-size:11px;direction:ltr;text-align:right;word-break:break-all;margin-top:2px}
+.tag{font-size:10px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:2px 6px;white-space:nowrap}
+.pwr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.pb{border-radius:10px;padding:11px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;background:#000;border:1px solid var(--line);color:var(--mute)}
+.pb.on{border-color:var(--green);color:var(--green)}
+.pb.off{border-color:var(--red);color:var(--red)}
+.pb:disabled{opacity:.3;cursor:default}
+.st{font-size:12px;color:var(--mute);margin-top:8px}
+.st b{color:var(--text);font-weight:600}
+.use{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.nums{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 8px}
+.nums .big2{font-size:16px;font-weight:600;direction:ltr;text-align:left}
+.nums .sm{font-size:11px;color:var(--mute);margin-top:2px}
+.spark{display:block;width:100%;height:46px;background:#050505;border-radius:8px;border:1px solid var(--line)}
+.spark polyline{fill:none;stroke:var(--red);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.spark polygon{fill:rgba(229,57,53,.12)}
+.warn{color:var(--red);font-size:11px;margin-top:6px}
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.prev{height:150px;background:#050505;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;position:relative}
+.prev iframe{width:200%;height:300px;border:0;transform:scale(.5);transform-origin:0 0;pointer-events:none}
+.api{font-family:Consolas,monospace;font-size:11px;color:#999;margin-top:8px;direction:ltr;text-align:left;word-break:break-all}
+.drow{padding:9px 0;border-bottom:1px solid var(--line)}
+.drow:last-child{border-bottom:none}
+.drow .r{display:flex;justify-content:space-between;font-size:12px}
+.drow .bar{margin-top:6px;height:5px}
+.empty{color:var(--mute);font-size:12px;padding:6px 0}
+.logbox{height:62vh;overflow:auto;direction:ltr;text-align:left;font-family:Consolas,monospace;font-size:12px;line-height:1.7;color:#ccc;margin-top:10px;word-break:break-word}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:.2s;z-index:10}
+.ov.on{opacity:1;pointer-events:auto}
+.drw{position:fixed;top:0;left:0;bottom:0;width:240px;max-width:80%;background:var(--panel);border-right:1px solid var(--line);transform:translateX(-100%);transition:transform .25s;z-index:11;padding:14px 10px}
+.drw.on{transform:translateX(0)}
+.drw .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 6px}
+.drw .hd b{font-size:15px}
+.tab{width:100%;background:none;border:none;color:var(--mute);display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit;text-align:right}
+.tab.on{background:#000;color:var(--text);box-shadow:inset -3px 0 0 var(--red)}
+.tab.on .i{color:var(--red)}
+</style>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-menu" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-os" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></symbol>
+  <symbol id="i-term" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></symbol>
+</svg>
+
+<header>
+  <button class="ib" onclick="drawer(true)" aria-label="منو"><svg class="i"><use href="#i-menu"/></svg></button>
+  <div class="ttl" id="ttl">داشبورد</div>
+  <div class="dot" id="hdot"></div>
+</header>
+
+<div class="ov" id="ov" onclick="drawer(false)"></div>
+<aside class="drw" id="drw">
+  <div class="hd"><b>سرور من</b><button class="ib" onclick="drawer(false)" aria-label="بستن"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <button class="tab on" data-s="s-dash" data-t="داشبورد" onclick="show(this)"><svg class="i"><use href="#i-grid"/></svg>داشبورد</button>
+  <button class="tab" data-s="s-os" data-t="سیستم‌عامل‌ها" onclick="show(this)"><svg class="i"><use href="#i-os"/></svg>سیستم‌عامل‌ها</button>
+  <button class="tab" data-s="s-db" data-t="پایگاه‌داده‌ها" onclick="show(this)"><svg class="i"><use href="#i-db"/></svg>پایگاه‌داده‌ها</button>
+  <button class="tab" data-s="s-flask" data-t="تست وب (Flask)" onclick="show(this)"><svg class="i"><use href="#i-code"/></svg>تست وب (Flask)</button>
+  <button class="tab" data-s="s-sites" data-t="سایت‌ها و برنامه‌ها" onclick="show(this)"><svg class="i"><use href="#i-globe"/></svg>سایت‌ها و برنامه‌ها</button>
+  <button class="tab" data-s="s-upd" data-t="آپدیت و بازنشانی" onclick="show(this)"><svg class="i"><use href="#i-dl"/></svg>آپدیت و بازنشانی</button>
+  <button class="tab" data-s="s-log" data-t="گزارش سرور" onclick="show(this)"><svg class="i"><use href="#i-log"/></svg>گزارش سرور</button>
+  <button class="tab" data-s="s-term" data-t="ترمینال" onclick="show(this)"><svg class="i"><use href="#i-term"/></svg>ترمینال</button>
+</aside>
+
+<main>
+  <!-- داشبورد -->
+  <section class="sec on" id="s-dash">
+    <h2>سرور اصلی</h2>
+    <div class="card">
+      <div class="row">
+        <div><b>سرور اصلی</b><div class="st" id="srvTxt">خاموش</div></div>
+        <button class="pill off" id="srvBtn" onclick="powerServer()">روشن کن</button>
+      </div>
+      <div class="note">ابتدا سرور را روشن کنید. با خاموش شدن سرور، همه‌ی سیستم‌عامل‌ها و پایگاه‌داده‌ها هم خاموش می‌شوند.</div>
+    </div>
+
+    <h2>حجم کل</h2>
+    <div class="card">
+      <div class="row"><b>ذخیره‌سازی (۱ PB)</b><span class="big" id="dk-big">0 GB / 1 PB</span></div>
+      <div class="seg" id="dk-seg"></div>
+      <div class="sub"><span id="dk-pct">0%</span><span id="dk-free">خالی: 1 PB</span></div>
+      <div class="legend" id="dk-leg"></div>
+    </div>
+    <div class="card">
+      <div class="row"><b>RAM (۴ TB)</b><span class="big" id="rm-big">0 GB / 4 TB</span></div>
+      <div class="bar"><i id="rm-bar"></i></div>
+      <div class="sub"><span id="rm-pct">0%</span><span id="rm-free">خالی: 4 TB</span></div>
+    </div>
+
+    <h2>مصرف هر بخش</h2>
+    <div class="card" id="dashUse"></div>
+
+    <h2>مشخصات سرور</h2>
+    <div id="specs"></div>
+  </section>
+
+  <section class="sec" id="s-os"><div id="osList"></div></section>
+  <section class="sec" id="s-db"><div id="dbList"></div></section>
+
+  <!-- تست وب -->
+  <section class="sec" id="s-flask">
+    <div class="card">
+      <h3>آپلود فایل پایتون (یا یکی از کتابخانه)</h3>
+      <input type="file" id="pyfile" accept=".py">
+      <h3 style="margin-top:14px">کتابخانه‌ی Flask</h3>
+      <select id="lib"><option value="hello">صفحه‌ی سلام</option><option value="api">API وضعیت (JSON)</option><option value="notes">یادداشت‌ها (دیتابیس)</option></select>
+      <select id="fdb"></select>
+      <input type="number" id="flimit" min="16" value="256" placeholder="محدودیت RAM (MB)">
+      <input type="url" id="runapi" placeholder="آدرس API سرور (اختیاری، خالی = داخل مرورگر)">
+      <button class="btn" onclick="runFlask()"><svg class="i"><use href="#i-play"/></svg>اجرا در تب جدید</button>
+      <div class="out" id="log">آماده</div>
+    </div>
+    <h2>سرورهای Flask فعال</h2>
+    <div id="flaskList"></div>
+  </section>
+
+  <!-- سایت‌ها -->
+  <section class="sec" id="s-sites">
+    <div class="card">
+      <h3>افزودن سایت یا برنامه</h3>
+      <select id="atype"><option value="site">سایت</option><option value="app">برنامه</option></select>
+      <input type="text" id="aname" placeholder="نام">
+      <input type="url" id="aurl" placeholder="آدرس سایت (https://...)">
+      <input type="url" id="aapi" placeholder="آدرس API (اختیاری)">
+      <input type="number" id="alimit" min="1" value="5" placeholder="محدودیت حجم (GB)">
+      <select id="adb"></select>
+      <button class="btn" onclick="addSite()"><svg class="i"><use href="#i-plus"/></svg>اتصال به سرور من</button>
+      <div class="note" id="anote"></div>
+    </div>
+    <div id="sites"></div>
+  </section>
+
+  <!-- آپدیت -->
+  <section class="sec" id="s-upd">
+    <h2>آپدیت‌ها</h2>
+    <div class="card">
+      <div class="top"><div><b>نسخه‌ی فعلی: <span id="ver"></span></b></div><span class="tag" id="updTag"></span></div>
+      <div id="updBox"></div>
+    </div>
+    <h2>بازنشانی</h2>
+    <div class="card">
+      <div class="note">همه‌ی حجم‌ها صفر و همه‌ی ماشین‌ها و سرور خاموش می‌شوند.</div>
+      <button class="btn" onclick="resetAll()"><svg class="i"><use href="#i-trash"/></svg>بازنشانی کل</button>
+    </div>
+  </section>
+
+  <!-- گزارش -->
+  <section class="sec" id="s-log">
+    <div class="card">
+      <div class="top"><b>گزارش‌های سرور</b><button class="btn g" onclick="clearLog()">پاک کن</button></div>
+      <div class="logbox" id="logs"></div>
+    </div>
+  </section>
+
+  <!-- ترمینال -->
+  <section class="sec" id="s-term">
+    <div class="card">
+      <div class="out" id="term">سرور من آماده است. دستور help را بزنید.</div>
+      <div class="tl">
+        <input id="cmd" placeholder="$ دستور..." onkeydown="if(event.key==='Enter')runCmd()">
+        <button class="btn" onclick="runCmd()" aria-label="ارسال"><svg class="i"><use href="#i-send"/></svg></button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);
+const HIST=30;
+const CAP={diskGB:1000000, ramGB:4096};
+const srv={state:'off'};            // off | starting | on | stopping
+const serverOn=()=>srv.state==='on';
+
+function drawer(open){ $('drw').classList.toggle('on',open); $('ov').classList.toggle('on',open); }
+function show(btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id===btn.dataset.s));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b===btn));
+  $('ttl').textContent=btn.dataset.t;
+  drawer(false);
+}
+function flash(el,msg){ el.textContent=msg; setTimeout(()=>{ if(el.textContent===msg) el.textContent=''; },2200); }
+
+/* ---------- مدل ---------- */
+const items=[];
+let seq=0, port=5000;
+function add(o){
+  const it=Object.assign({id:'r'+(++seq),used:0,state:'off'},o);
+  it.hist=[0];
+  items.push(it); return it;
+}
+const isVM=it=> it.type==='os' || it.type==='db';
+// ماشین‌ها و دیتابیس‌ها روشن شدن جدا دارند؛ سایت‌ها و Flask تابع سرور اصلی هستند
+const active=it=> isVM(it)? (serverOn() && it.state==='on') : (serverOn() && it.state!=='off');
+const pct=it=> it.limit? Math.min(100,it.used/it.limit*100):0;
+const col=p=> p>=100?'var(--red)':p>=80?'var(--orange)':'var(--green)';
+const gbTxt=gb=> gb>=1000000? (gb/1000000).toFixed(2)+' PB' : gb>=1000? (gb/1000).toFixed(1)+' TB' : gb.toFixed(gb<10?2:0)+' GB';
+const fmt=(n,u)=> u==='GB'? gbTxt(n) : (n<10?n.toFixed(2):n.toFixed(0))+' '+u;
+const ramOf=it=>{
+  if(!active(it)) return 0;
+  if(it.type==='os'||it.type==='db') return it.ram;
+  if(it.type==='flask') return it.used/1024;
+  return 0;
+};
+const diskOf=it=> it.unit==='GB'? it.used : 0;
+
+function spark(it){
+  const h=it.hist, n=h.length, W=200, H=44;
+  const pts=h.map((v,i)=>[n>1? (i*W/(HIST-1)).toFixed(1):0, (H-3-(Math.min(v,it.limit)/it.limit)*(H-8)).toFixed(1)]);
+  const line=pts.map(p=>p.join(',')).join(' ');
+  const area=pts.length? `${pts[0][0]},${H} ${line} ${pts[pts.length-1][0]},${H}`:'';
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polygon points="${area}"/><polyline points="${line}"/></svg>`;
+}
+function useBlock(it){
+  return `<div class="use"><div class="nums"><div class="big2" id="t-${it.id}"></div><div class="sm" id="m-${it.id}"></div></div><div id="s-${it.id}" style="width:100%;min-width:0">${spark(it)}</div></div>
+  <div class="bar"><i id="b-${it.id}"></i></div>`;
+}
+function paint(it){
+  const t=$('t-'+it.id); if(!t) return;
+  const p=pct(it);
+  t.textContent=fmt(it.used,it.unit)+' / '+fmt(it.limit,it.unit);
+  $('m-'+it.id).textContent= active(it)? p.toFixed(2)+'٪ پر شده' : 'خاموش (رشد متوقف است)';
+  $('b-'+it.id).style.width=p+'%';
+  $('b-'+it.id).style.background=col(p);
+  $('s-'+it.id).innerHTML=spark(it);
+  const w=$('w-'+it.id); if(w) w.style.display=p>=100?'block':'none';
+  const rs=$('rs-'+it.id); if(rs) rs.style.display=p>=100?'block':'none';
+  const d=$('d-'+it.id);
+  if(d){
+    d.querySelector('.r span:last-child').textContent=fmt(it.used,it.unit)+' / '+fmt(it.limit,it.unit);
+    d.querySelector('.bar i').style.width=p+'%';
+    d.querySelector('.bar i').style.background=col(p);
+  }
+}
+function record(it){ it.hist.push(it.used); if(it.hist.length>HIST) it.hist.shift(); }
+
+/* ---------- کارت‌ها ---------- */
+function vmCard(it){
+  const busy=it.state==='starting'||it.state==='stopping';
+  const stxt= it.state==='on'?'<b>روشن</b>': it.state==='off'?'<b>خاموش</b>':'<b>در حال تغییر...</b>';
+  const sub= it.type==='os'? `${it.cpu} CPU · RAM ${it.ram} GB` : `${it.role} · RAM ${it.ram} GB`;
+  const canOn= serverOn() && !busy && it.state==='off';
+  const canOff= !busy && it.state==='on';
+  return `<div class="card" id="c-${it.id}">
+    <div class="top"><div><b>${esc(it.name)}</b><small>${esc(sub)}</small></div><span class="tag">${it.type==='os'?'OS':'DB'}</span></div>
+    <div class="pwr">
+      <button class="pb on" ${canOn?'':'disabled'} onclick="power('${it.id}','on')">روشن کن</button>
+      <button class="pb off" ${canOff?'':'disabled'} onclick="power('${it.id}','off')">خاموش کن</button>
+    </div>
+    <div class="st">وضعیت: ${stxt}${serverOn()?'':' · ابتدا سرور اصلی را روشن کنید'}</div>
+    ${useBlock(it)}
+    ${it.type==='db'? `<div class="tl"><input id="dsn-${it.id}" value="${esc(it.dsn||'')}" placeholder="postgresql://user:pass@host/db (خالی = SQLite)"><button class="btn g" onclick="saveDsn('${it.id}')">ذخیره</button></div>`:''}
+    <button class="btn g" id="rs-${it.id}" style="display:none;margin-top:10px" onclick="resetItem('${it.id}')">ریست</button>
+  </div>`;
+}
+function siteCard(it){
+  const prev= it.url? `<div class="prev"><iframe src="${esc(it.url)}" loading="lazy" referrerpolicy="no-referrer"></iframe></div>` : '';
+  const sub= it.type==='flask'? (it.port? 'Flask · پورت '+it.port : 'Flask (داخل مرورگر)') : esc(it.url||'');
+  const api= it.api? `<div class="api">API: ${esc(it.api)}</div>`:'';
+  const db= it.dbId? items.find(x=>x.id===it.dbId):null;
+  const dbLine= db? `<div class="st">دیتابیس: ${esc(db.name)} · <b>${db.state==='on'&&serverOn()?'متصل':'قطع (خاموش است)'}</b></div>` : '<div class="st">بدون دیتابیس</div>';
+  const open= it.url? `<button class="btn g" onclick="openIt('${it.id}')"><svg class="i" style="width:14px;height:14px"><use href="#i-ext"/></svg>باز کن</button>` : '';
+  return `<div class="card" id="c-${it.id}">
+    <div class="top"><div style="min-width:0"><b>${esc(it.name)}</b><small>${sub}</small></div><span class="tag">${it.type==='flask'?'Flask':it.type==='site'?'سایت':'برنامه'}</span></div>
+    ${dbLine}
+    ${useBlock(it)}
+    <div class="warn" id="w-${it.id}" style="display:none">به محدودیت رسیده است.</div>
+    <button class="btn g" id="rs-${it.id}" style="display:none;margin-top:10px" onclick="resetItem('${it.id}')">ریست</button>
+    ${prev}${api}
+    <div class="acts">${open}
+      <button class="btn g" onclick="removeIt('${it.id}')"><svg class="i" style="width:14px;height:14px"><use href="#i-trash"/></svg>حذف</button>
+    </div></div>`;
+}
+function renderOS(){ const l=items.filter(i=>i.type==='os'); $('osList').innerHTML=l.map(vmCard).join('')||'<div class="empty">سیستم‌عاملی اضافه نشده</div>'; l.forEach(paint); }
+function renderDB(){ const l=items.filter(i=>i.type==='db'); $('dbList').innerHTML=l.map(vmCard).join('')||'<div class="empty">پایگاه‌داده‌ای اضافه نشده</div>'; l.forEach(paint); }
+function renderSites(){ const l=items.filter(i=>i.type==='site'||i.type==='app'); $('sites').innerHTML=l.map(siteCard).join('')||'<div class="empty">هنوز سایت یا برنامه‌ای وصل نشده</div>'; l.forEach(paint); }
+function renderFlask(){ const l=items.filter(i=>i.type==='flask'); $('flaskList').innerHTML=l.map(siteCard).join('')||'<div class="empty">سروری اجرا نشده</div>'; l.forEach(paint); }
+function renderDash(){
+  const box=$('dashUse');
+  if(!items.length){ box.innerHTML='<div class="empty">هنوز چیزی اجرا نشده</div>'; renderTotals(); return; }
+  box.innerHTML=items.map(it=>`<div class="drow" id="d-${it.id}"><div class="r"><span>${esc(it.name)}</span><span></span></div><div class="bar"><i></i></div></div>`).join('');
+  items.forEach(paint);
+  renderTotals();
+}
+function renderAll(){ populateDbSel(); renderOS(); renderDB(); renderSites(); renderFlask(); renderDash(); renderServer(); }
+
+/* ---------- مجموع‌ها ---------- */
+const legend={OS:'#e53935',DB:'#fb8c00',Site:'#8e24aa'};
+function renderTotals(){
+  const sum=(fn)=>items.reduce((s,i)=>s+fn(i),0);
+  const diskOS=sum(i=>i.type==='os'?diskOf(i):0);
+  const diskDB=sum(i=>i.type==='db'?diskOf(i):0);
+  const diskSA=sum(i=>(i.type==='site'||i.type==='app')?diskOf(i):0);
+  const used=diskOS+diskDB+diskSA;
+  $('dk-big').textContent=gbTxt(used)+' / '+gbTxt(CAP.diskGB);
+  $('dk-pct').textContent=(used/CAP.diskGB*100).toFixed(3)+'٪ پر شده';
+  $('dk-free').textContent='خالی: '+gbTxt(CAP.diskGB-used);
+  const segs=[['OS',diskOS],['DB',diskDB],['Site',diskSA]];
+  $('dk-seg').innerHTML=segs.map(([k,v])=>`<i style="width:${(v/CAP.diskGB*100).toFixed(4)}%;background:${legend[k]}"></i>`).join('');
+  $('dk-leg').innerHTML=segs.map(([k,v])=>`<span style="--c:${legend[k]}">${k}: ${gbTxt(v)}</span>`).join('');
+
+  const ram=sum(ramOf);
+  const rp=ram/CAP.ramGB*100;
+  $('rm-big').textContent=gbTxt(ram)+' / '+gbTxt(CAP.ramGB);
+  $('rm-bar').style.width=Math.min(100,rp)+'%';
+  $('rm-bar').style.background=col(rp);
+  $('rm-pct').textContent=rp.toFixed(2)+'٪ پر شده';
+  $('rm-free').textContent='خالی: '+gbTxt(CAP.ramGB-ram);
+}
+
+/* ---------- سرور اصلی ---------- */
+function renderServer(){
+  const btn=$('srvBtn'), txt=$('srvTxt'), dot=$('hdot');
+  const s=srv.state, blocked=s==='off'&&srvBlocked();
+  txt.textContent= s==='on'?'روشن': s==='off'?(blocked?'خاموش · نصب آپدیت لازم است':'خاموش'): s==='starting'?'در حال روشن شدن...':'در حال خاموش شدن...';
+  btn.textContent= s==='on'?'خاموش کن': s==='off'?'روشن کن':'در حال تغییر';
+  btn.className='pill '+(s==='on'?'on':'off');
+  btn.disabled= s==='starting'||s==='stopping'||blocked;
+  dot.className='dot'+(s==='on'?' on':'');
+}
+function powerServer(){
+  if(srv.state==='off'){
+    if(srvBlocked()){ sys('سرور روشن نمی‌شود: آپدیت دانلودشده را نصب کنید'); return; }
+    srv.state='starting'; renderServer();
+    setTimeout(()=>{ srv.state='on'; renderAll(); sys('سرور اصلی روشن شد'); },2000);
+  }else if(srv.state==='on'){
+    srv.state='stopping'; renderServer();
+    setTimeout(()=>{
+      items.forEach(it=>{ if(isVM(it)) it.state='off'; });
+      srv.state='off'; renderAll(); sys('سرور اصلی خاموش شد. همه‌ی بخش‌ها خاموش شدند');
+    },1800);
+  }
+}
+
+/* ---------- روشن و خاموش کردن ماشین‌ها ---------- */
+function power(id,target){
+  const it=items.find(i=>i.id===id); if(!it || !isVM(it) || !serverOn()) return;
+  if(target==='on' && it.state==='off'){
+    it.state='starting'; renderOS(); renderDB(); renderTotals();
+    setTimeout(()=>{ it.state='on'; if(it.type==='os'&&it.used<20) it.used=20; renderOS(); renderDB(); renderDash(); sys(it.name+' روشن شد'); },1800);
+  }else if(target==='off' && it.state==='on'){
+    it.state='stopping'; renderOS(); renderDB(); renderTotals();
+    setTimeout(()=>{ it.state='off'; renderOS(); renderDB(); renderDash(); sys(it.name+' خاموش شد'); },1500);
+  }
+}
+
+/* ---------- عملیات ---------- */
+function resetItem(id){
+  const it=items.find(i=>i.id===id); if(!it) return;
+  it.used=0; it.hist=[0];
+  paint(it); renderTotals();
+  sys('ریست شد: '+it.name);
+}
+function saveDsn(id){
+  const it=items.find(i=>i.id===id); if(!it) return;
+  it.dsn=$('dsn-'+id).value.trim();
+  sys('آدرس اتصال ذخیره شد: '+it.name);
+}
+function openIt(id){ const it=items.find(i=>i.id===id); if(it) window.open(it.url,'_blank'); }
+function removeIt(id){
+  const i=items.findIndex(x=>x.id===id); if(i<0) return;
+  const it=items.splice(i,1)[0];
+  if(it.pid&&apiBase) fetch(apiBase+'/api/stop/'+it.pid,{method:'POST'}).catch(()=>{});
+  renderSites(); renderFlask(); renderDash(); sys('حذف شد: '+it.name);
+}
+
+/* ---------- رشد حجم بر اساس زمان واقعی ---------- */
+let last=Date.now(), lastSnap=Date.now();
+function grow(dt){
+  items.forEach(it=>{
+    if(it.type==='os'||it.type==='flask'||!active(it)||!upd.growthOn||it.used>=it.limit) return;
+    it.used=Math.min(it.limit,it.used+dt);        // ۱ GB در ثانیه
+  });
+  items.forEach(it=>{
+    if(it.type==='flask'&&active(it)) it.used=Math.min(it.limit,it.used+dt*0.02);
+  });
+}
+function arrivalsTick(){
+  let guard=0;
+  while(Date.now()>=arrive && guard++<500){
+    arrive+=delay();
+    if(Math.random()<0.1) continue;               // گاهی آپدیتی نمی‌آید
+    const n=Math.random()<0.35?5:1;               // گاهی ۵ تا با هم
+    for(let k=0;k<n;k++) addUpd();
+    sys('آپدیت جدید رسید: '+n+' عدد');
+  }
+  if(guard>1) renderUpd();
+}
+function tick(){
+  const now=Date.now();
+  const dt=Math.min(3600,(now-last)/1000);
+  last=now;
+  if(dt>0) grow(dt);
+  arrivalsTick();
+  items.forEach(it=>{ if(act(it)) record(it); paint(it); });
+  renderTotals();
+  if(now-lastSnap>=60000){
+    lastSnap=now;
+    if(serverOn()){
+      const d=items.reduce((t,i)=>t+diskOf(i),0), r=items.reduce((t,i)=>t+ramOf(i),0);
+      sys('گزارش لحظه‌ای | ذخیره‌سازی: '+gbTxt(d)+' | RAM: '+gbTxt(r));
+    }
+  }
+}
+
+/* ---------- مشخصات ---------- */
+const specs=[
+  {t:'پردازنده',items:['۴× AMD EPYC 9654 / 9754','۴ ترابایت DDR5 ECC RAM','NVMe Enterprise']},
+  {t:'پایگاه‌داده',items:['۴× PostgreSQL Server','Redis Cluster','Replication']},
+  {t:'ذخیره‌سازی',items:['ظرفیت ۱ پتابایت','Enterprise HDD','Enterprise SSD','NVMe Storage']},
+  {t:'هوش مصنوعی',items:['۴× GPU Server','NVIDIA H100 / H200','حافظه‌ی GPU بالا']},
+  {t:'شبکه',items:['100GbE Switch','Enterprise Router','Hardware Firewall']}
+];
+$('specs').innerHTML=specs.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><ul>${s.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+
+/* ---------- ماشین‌های پیش‌فرض ---------- */
+function makeDefaults(){
+[
+  {name:'Proxmox VE',cpu:16,ram:64,limit:2000},
+  {name:'Kali Linux',cpu:8,ram:16,limit:500},
+  {name:'Ubuntu Server',cpu:8,ram:32,limit:800},
+  {name:'Debian',cpu:4,ram:16,limit:300},
+  {name:'Windows Server',cpu:8,ram:32,limit:1000}
+].forEach(o=>add({type:'os',unit:'GB',...o}));
+[1,2,3,4].forEach(n=>add({type:'db',unit:'GB',name:'PostgreSQL Node '+n,role:'PostgreSQL',ram:128,limit:20000}));
+add({type:'db',unit:'GB',name:'Redis Cluster',role:'Redis',ram:512,limit:2000});
+
+}
+
+/* ---------- Flask (واقعی: از طریق manager_api.py) ---------- */
+let apiBase='';
+function populateDbSel(){
+  const opts='<option value="">بدون دیتابیس (SQLite محلی)</option>'+items.filter(i=>i.type==='db').map(i=>`<option value="${i.id}">${esc(i.name)}</option>`).join('');
+  ['fdb','adb'].forEach(id=>{ const el=$(id); if(!el) return; const p=el.value; el.innerHTML=opts; el.value=p; });
+}
+const TPL={
+hello:`from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "<h1>سلام از سرور من</h1>"
+`,
+api:`from flask import Flask, jsonify
+app = Flask(__name__)
+
+@app.route("/api/status")
+def status():
+    return jsonify(status="online", server="Mere Server")
+`,
+notes:`import html, os, sqlite3
+from flask import Flask, request
+app = Flask(__name__)
+
+DSN = os.environ.get("DATABASE_URL", "")
+PH = "%s" if DSN else "?"
+
+def connect():
+    if DSN:
+        import psycopg2
+        return psycopg2.connect(DSN)
+    return sqlite3.connect("notes.db")
+
+c = connect()
+c.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT)")
+c.commit()
+c.close()
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    c = connect()
+    body = (request.form.get("body") or "").strip()
+    if request.method == "POST" and body:
+        c.execute("INSERT INTO notes (body) VALUES (" + PH + ")", (body,))
+        c.commit()
+    rows = c.execute("SELECT body FROM notes ORDER BY id DESC LIMIT 50").fetchall()
+    c.close()
+    items = "".join("<li>" + html.escape(r[0]) + "</li>" for r in rows)
+    engine = "PostgreSQL" if DSN else "SQLite"
+    return ("<h2>یادداشت‌ها (" + engine + ")</h2>"
+            "<form method='post'><input name='body' required> <button>ثبت</button></form>"
+            "<ul>" + items + "</ul>")
+`
+};
+const RUN_PY=`
+def run_app(code, path, method, form):
+    ns = {"__name__": "app_module"}
+    exec(compile(code, "app.py", "exec"), ns)
+    client = ns["app"].test_client()
+    r = client.post(path, data=form) if method == "POST" else client.get(path)
+    return (r.status_code, r.get_data(as_text=True))
+`;
+let pyPromise=null;
+function getPy(){
+  if(!pyPromise){
+    pyPromise=(async()=>{
+      const py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'});
+      await py.loadPackage('micropip');
+      await py.runPythonAsync("import micropip\nawait micropip.install('flask')");
+      py.runPython(RUN_PY);
+      return py;
+    })();
+    pyPromise.catch(()=>{ pyPromise=null; });
+  }
+  return pyPromise;
+}
+async function runFlask(){
+  const log=$('log');
+  if(!serverOn()) return flash(log,'ابتدا سرور اصلی را روشن کنید');
+  const base=$('runapi').value.trim().replace(/\/$/,'');
+  const f=$('pyfile').files[0], tpl=$('lib').value, dbi=$('fdb').value;
+  const db=items.find(i=>i.id===dbi);
+  const name= f? f.name : $('lib').selectedOptions[0].textContent;
+  const limit=Math.max(16,parseInt($('flimit').value,10)||256);
+  log.textContent='در حال اجرا...';
+  try{
+    let url, port=null, pid=null;
+    if(base){
+      apiBase=base;
+      const fd=new FormData();
+      if(f) fd.append('app',f,'app.py'); else fd.append('template',tpl);
+      fd.append('dsn', db? (db.dsn||'') : '');
+      const r=await fetch(base+'/api/run',{method:'POST',body:fd});
+      const j=await r.json();
+      if(!r.ok) throw new Error(j.error||r.status);
+      url=j.url; port=j.port; pid=j.id;
+    }else{
+      const code= f? await f.text() : TPL[tpl];
+      log.textContent='در حال بارگذاری Python (بار اول کمی طول می‌کشد)...';
+      const py=await getPy();
+      py.globals.set('__code',code);
+      const [status,body]=py.runPython("run_app(__code,'/','GET',{})").toJs();
+      if(status>=400) throw new Error('خطای Flask: '+status);
+      url=URL.createObjectURL(new Blob([body],{type:'text/html'}));
+    }
+    add({type:'flask',name,url,api:'',limit,unit:'MB',port,pid,dbId:dbi||null,state:'on'});
+    log.textContent='اجرا شد';
+    sys('Flask اجرا شد: '+name);
+    renderFlask(); renderDash();
+  }catch(e){
+    log.textContent='خطا: '+(e.message||e);
+  }
+}
+
+/* ---------- سایت‌ها ---------- */
+function addSite(){
+  const note=$('anote');
+  const n=$('aname').value.trim(), u=$('aurl').value.trim(), a=$('aapi').value.trim();
+  const limit=Math.max(1,parseFloat($('alimit').value)||5);
+  if(!n||!u) return flash(note,'نام و آدرس الزامی است');
+  if(!/^https?:\/\//.test(u)) return flash(note,'آدرس باید با https:// شروع شود');
+  add({type:$('atype').value,name:n,url:u,api:a,limit,unit:'GB',state:'on',dbId:$('adb').value||null});
+  $('aname').value=''; $('aurl').value=''; $('aapi').value='';
+  renderSites(); renderDash();
+  sys('وصل شد: '+n+' (محدودیت '+limit+' GB)');
+}
+
+/* ---------- آپدیت، ارتقا و بازنشانی ---------- */
+const upd={ver:'1.0.0',last:'1.0.0',growthOn:false,queue:[],dl:null};
+const rr=(x,y)=>x+Math.random()*(y-x);
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function srvBlocked(){ return !upd.growthOn || upd.queue.some(x=>x.state==='done'); }
+function nextVer(){ const p=upd.last.split('.').map(Number); p[2]++; upd.last=p.join('.'); return upd.last; }
+function randomChanges(){
+  const out=[], n=1+Math.floor(Math.random()*3);
+  for(let k=0;k<n;k++){
+    const r=Math.random();
+    if(r<0.15) out.push({target:'server',kind:'disk',amt:pick([1000,2000,4000])});
+    else if(r<0.25) out.push({target:'server',kind:'ram',amt:pick([256,512])});
+    else{
+      const pool=items.filter(i=>i.unit==='GB');
+      if(!pool.length) continue;
+      const it=pool[Math.floor(Math.random()*pool.length)];
+      const kind= !isVM(it)? 'disk' : it.type==='os'? pick(['disk','ram','cpu']) : pick(['disk','ram']);
+      const amt= kind==='disk'? pick([200,500,1000]) : kind==='ram'? pick([8,16,32]) : pick([2,4]);
+      out.push({target:it.id,kind,amt});
+    }
+  }
+  return out;
+}
+function describeChange(c){
+  const name= c.target==='server'? 'سرور' : (items.find(i=>i.id===c.target)||{name:'؟'}).name;
+  const what= c.kind==='disk'? 'ذخیره‌سازی +'+gbTxt(c.amt) : c.kind==='ram'? 'RAM +'+c.amt+' GB' : 'CPU +'+c.amt;
+  return name+': '+what;
+}
+function applyChange(c){
+  if(c.target==='server'){
+    if(c.kind==='disk') CAP.diskGB+=c.amt; else CAP.ramGB+=c.amt;
+  }else{
+    const it=items.find(i=>i.id===c.target); if(!it) return;
+    if(c.kind==='disk') it.limit+=c.amt;
+    else if(c.kind==='ram') it.ram+=c.amt;
+    else it.cpu=(it.cpu||0)+c.amt;
+  }
+  sys('ارتقا: '+describeChange(c));
+}
+function addUpd(){ upd.queue.push({v:nextVer(),state:'new',changes:randomChanges()}); }
+function delay(){
+  const r=Math.random();
+  return r<0.5? rr(5,60)*1000 : r<0.85? rr(1,10)*60000 : rr(10,40)*60000;
+}
+let arrive=Date.now()+delay();
+function dlNext(){
+  const u=upd.queue.find(x=>x.state==='new');
+  if(!u){ upd.dl=null; renderUpd(); return; }
+  const d={u,got:0}; upd.dl=d; u.state='dl'; renderUpd();
+  const t=setInterval(()=>{
+    d.got=Math.min(3,d.got+0.06);             // ۶۰۰ MB/s
+    renderUpd();
+    if(d.got>=3){
+      clearInterval(t); u.state='done'; upd.dl=null;
+      sys('دانلود v'+u.v+' کامل شد');
+      dlNext();
+    }
+  },100);
+}
+function downloadUpd(){ if(!upd.dl) dlNext(); }
+function installUpd(){
+  const done=upd.queue.filter(x=>x.state==='done'); if(!done.length) return;
+  upd.ver=done[done.length-1].v;
+  done.forEach(u=>u.changes.forEach(applyChange));
+  upd.queue=upd.queue.filter(x=>x.state!=='done');
+  upd.growthOn=true;
+  sys(done.length+' آپدیت نصب شد (v'+upd.ver+'). رشد ۱ GB در ثانیه فعال شد');
+  renderUpd(); renderAll();
+}
+function renderUpd(){
+  $('ver').textContent=upd.ver;
+  $('updTag').textContent= upd.growthOn?'رشد فعال':'رشد غیرفعال';
+  const nw=upd.queue.filter(x=>x.state==='new').length;
+  const dn=upd.queue.filter(x=>x.state==='done').length;
+  const bar= upd.dl? Math.round(upd.dl.got/3*100) : 0;
+  let h=`<div class="st">${upd.queue.length? nw+' منتظر دانلود · '+dn+' آماده‌ی نصب' : 'همه‌ی آپدیت‌ها نصب شده‌اند'}</div>`;
+  h+=`<div class="bar"><i style="width:${bar}%;background:var(--green)"></i></div>`;
+  h+=`<div class="acts">
+    <button class="btn" style="width:auto;flex:1;margin:0" ${nw&&!upd.dl?'':'disabled'} onclick="downloadUpd()">دانلود</button>
+    <button class="btn" style="width:auto;flex:1;margin:0" ${dn&&!upd.dl?'':'disabled'} onclick="installUpd()">نصب</button>
+  </div>`;
+  h+=upd.queue.slice(0,30).map(u=>{
+    const t= u.state==='new'?'منتظر دانلود': u.state==='dl'? upd.dl.got.toFixed(2)+' / 3 GB' : 'آماده‌ی نصب';
+    const what=u.changes.map(describeChange).join(' · ')||'بدون تغییر';
+    return `<div class="drow"><div class="r"><span>v${u.v} · 3 GB</span><span>${t}</span></div><div style="font-size:12px;color:#9a9a9a;margin-top:4px">${esc(what)}</div></div>`;
+  }).join('');
+  $('updBox').innerHTML=h;
+  renderServer();
+}
+function resetAll(){
+  if(!confirm('بازنشانی کل؟ همه‌ی حجم‌ها صفر و همه‌ی بخش‌ها خاموش می‌شوند.')) return;
+  items.forEach(i=>{ if(isVM(i)) i.state='off'; i.used=0; i.hist=[0]; });
+  srv.state='off';
+  renderAll();
+  sys('بازنشانی کل انجام شد');
+}
+
+/* ---------- گزارش ---------- */
+function logEv(m,lvl){
+  const t=new Date().toLocaleTimeString('en-GB');
+  const c= lvl==='warn'?'var(--orange)': lvl==='err'?'var(--red)':'#bbb';
+  $('logs').insertAdjacentHTML('afterbegin',`<div><span style="color:var(--mute)">${t}</span> <span style="color:${c}">${esc(m)}</span></div>`);
+}
+function sys(m){ print(m); logEv(m); }
+function clearLog(){ $('logs').innerHTML=''; }
+
+/* ---------- ترمینال ---------- */
+function print(t){ const o=$('term'); o.textContent+=t+'\n'; o.scrollTop=o.scrollHeight; }
+function runCmd(){
+  const c=$('cmd'), v=c.value.trim();
+  if(!v) return;
+  c.value='';
+  if(v==='clear'){ $('term').textContent=''; return; }
+  print('$ '+v);
+  const low=v.toLowerCase();
+  if(low==='help') return print('دستورها: help, server on|off, disk, ram, os, db, roshan <name>, khamosh <name>, date, clear');
+  if(low==='date') return print(new Date().toString());
+  if(low==='disk'){
+    const u=items.reduce((s,i)=>s+diskOf(i),0);
+    return print('ذخیره‌سازی: '+gbTxt(u)+' / '+gbTxt(CAP.diskGB)+' ('+(u/CAP.diskGB*100).toFixed(3)+'٪)');
+  }
+  if(low==='ram'){
+    const u=items.reduce((s,i)=>s+ramOf(i),0);
+    return print('RAM: '+gbTxt(u)+' / '+gbTxt(CAP.ramGB)+' ('+(u/CAP.ramGB*100).toFixed(2)+'٪)');
+  }
+  if(low==='os') return items.filter(i=>i.type==='os').forEach(it=>print(it.name.padEnd(18)+' '+it.state));
+  if(low==='db') return items.filter(i=>i.type==='db').forEach(it=>print(it.name.padEnd(18)+' '+it.state));
+  if(low==='server on'){ return srv.state==='off'? powerServer() : print('سرور از قبل روشن است'); }
+  if(low==='server off'){ return srv.state==='on'? powerServer() : print('سرور از قبل خاموش است'); }
+  const m=low.match(/^(roshan|khamosh)\s+(.+)$/);
+  if(m){
+    const it=items.find(i=>isVM(i) && i.name.toLowerCase()===m[2].trim());
+    if(!it) return print('چیزی پیدا نشد: '+m[2]);
+    if(!serverOn()) return print('ابتدا سرور اصلی را روشن کنید');
+    if(m[1]==='roshan' && it.state==='off') return power(it.id,'on');
+    if(m[1]==='khamosh' && it.state==='on') return power(it.id,'off');
+    return print(it.name+' از قبل '+(it.state==='on'?'روشن':'خاموش')+' است');
+  }
+  print('دستور پیدا نشد: '+v);
+}
+
+/* ---------- ذخیره و بازیابی ---------- */
+const KEY='mereServer.v1';
+function setSave(){}
+function snapshot(){
+  return {savedAt:Date.now(), srv:srv.state, CAP, seq, port, arrive,
+    upd:{ver:upd.ver,last:upd.last,growthOn:upd.growthOn,queue:upd.queue}, items};
+}
+function save(){
+  let data;
+  try{ data=JSON.stringify(snapshot()); }catch(e){ return; }
+  try{
+    localStorage.setItem(KEY,data);
+    setSave('ذخیره شد در این مرورگر · '+new Date().toLocaleTimeString('fa-IR'));
+  }catch(e){
+    setSave('مرورگر اجازه‌ی ذخیره نداد. از «دانلود فایل ذخیره» استفاده کنید');
+  }
+}
+function applyData(d){
+  if(!d||!d.items) return false;
+  Object.assign(CAP,d.CAP); seq=d.seq; port=d.port; arrive=d.arrive;
+  upd.ver=d.upd.ver; upd.last=d.upd.last; upd.growthOn=d.upd.growthOn;
+  upd.queue=(d.upd.queue||[]).map(u=>({...u,state:u.state==='dl'?'new':u.state})); upd.dl=null;
+  items.length=0;
+  d.items.forEach(x=>{
+    if(x.type==='flask'){ x.url=''; x.pid=null; }
+    if(isVM(x)) x.state=(x.state==='on'||x.state==='starting')?'on':'off';
+    items.push(x);
+  });
+  srv.state=(d.srv==='on'||d.srv==='starting')?'on':'off';
+  if(serverOn()){
+    const dt=Math.min(31536000,(Date.now()-d.savedAt)/1000);
+    if(dt>0) grow(dt);
+  }
+  last=Date.now();
+  return true;
+}
+function load(){
+  let d=null;
+  try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ d=null; }
+  return applyData(d);
+}
+/* ---------- شروع ---------- */
+const loaded=load();
+if(!loaded){ makeDefaults(); addUpd(); logEv('سرور من ساخته شد'); }
+else{ logEv('سرور من از آخرین وضعیت ادامه داد'); }
+renderAll(); renderUpd(); tick();
+setInterval(tick,1000);
+save();
+setInterval(save,2000);
+addEventListener('pagehide',save);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) save(); });
+</script>
+</body>
+</html>
